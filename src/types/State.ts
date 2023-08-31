@@ -1,7 +1,7 @@
 import { Theme } from "@tauri-apps/api/window";
 import { TodoList } from "./TodoList";
 
-// 状態を管理
+// 状態を管理...Stateはオブジェクト型の型エイリアス(型エイリアスは色々な型、関数を分かりやすく命名できる)
 export type State = {
     todoLists: TodoList[]; //複数のListが格納
     selectedTodoList: TodoList | null; // 選択されているList
