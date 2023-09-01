@@ -6,12 +6,13 @@ import { Fragment, ReactNode } from "react";
 import { Dialog, Transition } from '@headlessui/react';
 
 type ModalProps = {
-    children: ReactNode,
+    children: ReactNode, //タグの内側の要素を扱う
     onClose: () => void,
     open: boolean,
     title: string,
 }
 
+// exportしたのが、コンポーネントとして扱われる
 export default function Modal(props: ModalProps) {
     const { children, onClose, open, title } = props;
 
