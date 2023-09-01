@@ -10,6 +10,7 @@ import { TodoList } from "../types/TodoList";
 import { Result } from "../types/Result";
 
 // 状態を管理するためのカスタムフック(setで状態を更新)
+// ジェネリクスでStateタイプを宣言して、Stateプロパティのみをフックとして登録
 export const useStore = create<State>((set, get) => ({
     todoLists: [],
     selectedTodoList: null,
