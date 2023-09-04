@@ -17,17 +17,16 @@ export default function App() {
     useEffect(() => {
         getTodoLists();
         setTheme();
-        console.log("useEffect");
     }, [])
 
     // ?
     useEffect(() => {
         // selectされているListが存在するならば
         if (selectedTodoList) {
-          selectTodoList(
-            todoLists.find((todoList) => todoList.id === selectedTodoList.id) ?? 
-            null
-          )
+            selectTodoList(
+                todoLists.find((todoList) => todoList.id === selectedTodoList.id) ?? 
+                null
+            )
         }
     }, [todoLists])
 
