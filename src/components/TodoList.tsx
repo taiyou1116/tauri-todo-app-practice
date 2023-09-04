@@ -34,7 +34,8 @@ function TodoItemComponent(props: TodoItemProps) {
           onClick={() => onUpdateComplete(todoItem.id, !todoItem.complete)} //!で反転させる
           variant={todoItem.complete ? 'success' : 'default'}
         />
-        <p className="grow">{todoItem.text}</p> //兄弟要素よりも優先して余白を取る
+        {/* grow...兄弟要素よりも優先して余白を取る */}
+        <p className="grow">{todoItem.text}</p> 
         <Button 
           icon={<MinusSmallIcon className="h-4 w-4" />}
           onClick={() => onDelete(todoItem.id)}

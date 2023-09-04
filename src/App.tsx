@@ -17,6 +17,7 @@ export default function App() {
     useEffect(() => {
         getTodoLists();
         setTheme();
+        console.log("useEffect");
     }, [])
 
     // ?

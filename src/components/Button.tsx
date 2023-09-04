@@ -35,7 +35,7 @@ export default function Button(props: ButtonProps) {
         <button
           type={type ?? 'button'}
           className={classes ?? ''}
-          onClick={onClick ? () => onClick : undefined}
+          onClick={onClick ? () => onClick() : undefined}
         >
           <span className="my-auto">{icon}</span>
           {text && <span className={`${icon ? 'ml-1' : ''}`}>{text}</span>}

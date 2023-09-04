@@ -23,8 +23,11 @@ export const useStore = create<State>((set, get) => ({
         const result: Result<TodoList[], string> = await invoke('get_todo_lists');
         if (typeof result === 'string') {
             toast.error(`Something went wrong: ${result}`);
+            console.log("err");
+
             return;
         }
+        console.log("great");
         set({ todoLists: result });
     },
     // Listの作成(TodoListを返す)
@@ -120,8 +123,8 @@ export const useStore = create<State>((set, get) => ({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
                     if (todoList.id === listId) {
-                        todoList.todos = todoList.todos.filter((TodoItem) => {
-                            TodoItem.id !== todoId
+                        todoList.todos = todoList.todos.filter((todoItem) => {
+                            todoItem.id !== todoId
                         })
                     }
                     return todoList;

@@ -51,7 +51,9 @@ export default function Sidebar() {
           <p className="flex font-medium self-end text-lg">Lists</p>
           <Button 
             icon={<PlusIcon className="h-[22px] w-[16px]" />}
-            onClick={() => setCreateListModalOpen(true)}
+            onClick={() => {
+              console.log("button");
+              setCreateListModalOpen(true)}}
           />
         </div>
         {/* Dialog */}
