@@ -68,8 +68,10 @@ export default function TodoListComponent(props: TodoListProps) {
 
     function handleOnCreateTodoItem(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        onCreateTodoItem(todoList.id, newTodoItemText);
-        setNewTodoItemText('');
+        if (newTodoItemText.length > 0) {
+          onCreateTodoItem(todoList.id, newTodoItemText);
+          setNewTodoItemText('');
+        }
     }
 
     return (
