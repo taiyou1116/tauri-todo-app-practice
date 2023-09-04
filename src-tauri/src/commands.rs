@@ -55,15 +55,30 @@ pub async fn delete_todo_list(
     state: tauri::State<'_, AppState>,
     list_id: i32,
 ) -> Result<Option<todo_list::Data>, String> {
+    // 先にitemを削除して参照をなくす
     match state
         .prisma_client
-        .todo_list()
-        .delete(todo_list::id::equals(list_id))
+        .todo_item()
+        // 複数削除する場合はdelete_manyを使う(特定できないときは、WhereParamが返り値)
+        .delete_many(vec![todo_item::todo_list_id::equals(list_id)])
         .exec()
         .await
     {
-        //　返り値をSomeでラップすることで呼び出し元で値の強調になる?
-        Ok(delete_list) => Ok(Some(delete_list)),
+        Ok(_) => {
+            match state
+                .prisma_client
+                .todo_list()
+                .delete(todo_list::id::equals(list_id))
+                .exec()
+                .await
+            {
+                Ok(_) => Ok(None),
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    Err(e.to_string())
+                }
+            }
+        }
         Err(e) => {
             println!("Error: {:?}", e);
             Err(e.to_string())
