@@ -129,6 +129,7 @@ export const useStore = create<State>((set, get) => ({
             ]
         })
     },
+    // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
     setTheme: (theme?: Theme) => {
         // ??...themeかnullかどうか
