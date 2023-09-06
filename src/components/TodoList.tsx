@@ -20,11 +20,28 @@ import { useState } from "react";
 type TodoItemProps = {
     onDelete: (todoItemId: number) => void,
     onUpdateComplete: (todoItemId: number, complete: boolean) => void,
+    onRename: (todoItemId: number, newTodoItemText: string) => void,
     todoItem: TodoItem,
 }
 
 function TodoItemComponent(props: TodoItemProps) {
-    const { onDelete, onUpdateComplete, todoItem } = props;
+    const { onDelete, onUpdateComplete, onRename, todoItem } = props;
+
+    const [isEditing, setIsEditig] = useState(false);
+    const [editedText, setEditedText] = useState(todoItem.text);
+
+    // // 編集モード
+    const handleEditClick = () => {
+        setIsEditig(true);
+    }
+
+    function handleOnEditTodoText(e: React.FormEvent<HTMLFormElement>): void {
+        e.preventDefault();
+        if (editedText.length > 0) {
+            onRename(todoItem.id, editedText);
+            setIsEditig(false);
+        }
+    }
 
     return (
       <div className="flex flex-row gap-2 items-center">
@@ -34,8 +51,23 @@ function TodoItemComponent(props: TodoItemProps) {
           onClick={() => onUpdateComplete(todoItem.id, !todoItem.complete)} //!で反転させる
           variant={todoItem.complete ? 'success' : 'default'}
         />
-        {/* grow...兄弟要素よりも優先して余白を取る */}
-        <p className="grow">{todoItem.text}</p> 
+
+        {isEditing ? (
+          <form onSubmit={(e) => handleOnEditTodoText(e)}>
+            <div className="grow">
+              <Input
+                onChange={(v) => setEditedText(v)}
+                placeholder="new todo text..."
+                value={editedText}
+              />
+            </div>
+          </form>
+        ) : (
+          <p className="grow" onClick={() => handleEditClick()}>
+            {todoItem.text}
+          </p> 
+        )}
+
         <Button 
           icon={<MinusSmallIcon className="h-4 w-4" />}
           onClick={() => onDelete(todoItem.id)}
@@ -60,6 +92,7 @@ export default function TodoListComponent(props: TodoListProps) {
     const onCreateTodoItem = useStore((store) => store.createTodoItem);
     const onDeleteTodoItem = useStore((store) => store.deleteTodoItem);
     const onUpdateTodoItemComplete = useStore((store) => store.updateTodoItemComplete);
+    const onRenameTodoItem = useStore((store) => store.renameTodoItem);
 
     // ModalDialogの状態(表示、非表示)を管理
     const [renameListModalOpen, setRenameListModalOpen] = useState(false);
@@ -99,12 +132,15 @@ export default function TodoListComponent(props: TodoListProps) {
               onUpdateComplete={(todoItemId: number, complete: boolean) => 
                 onUpdateTodoItemComplete(todoList.id, todoItemId, complete)
               }
+              onRename={(todoItemId: number, newTodoItemText: string) => 
+                onRenameTodoItem(todoList.id, todoItemId, newTodoItemText)
+              }
               todoItem={todoItem}
             />
           ))}
         </div>
         {/* 下段のform */}
-          <form 
+        <form 
             className="border border-gray-100 dark:border-slate-700 flex flex-row py-4 rounted-md shadow-sm"
             onSubmit={(e) => handleOnCreateTodoItem(e)}
           >

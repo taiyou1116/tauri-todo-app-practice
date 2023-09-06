@@ -129,6 +129,25 @@ export const useStore = create<State>((set, get) => ({
             ]
         })
     },
+    renameTodoItem: async (listId, todoId, todoText) => {
+        const result: Result<TodoItem, string> = await invoke("rename_todo_item", {listId, todoId, todoText});
+        if (typeof result === "string") {
+            toast.error(`Something went wrong: ${result}`);
+            return;
+        }
+        set({
+            todoLists: [
+                ...get().todoLists.map((todoList) => {
+                    if (todoList.id === listId) {
+                        todoList.todos = todoList.todos.map((TodoItem) => {
+                            return TodoItem.id === todoId ? result : TodoItem;
+                        })
+                    }
+                    return todoList;
+                })
+            ]
+        })
+    },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
     setTheme: (theme?: Theme) => {
