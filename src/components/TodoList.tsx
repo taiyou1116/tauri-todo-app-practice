@@ -2,7 +2,7 @@
 
 // アイコンインポート
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { CheckIcon, MinusSmallIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, ClockIcon, MinusSmallIcon } from "@heroicons/react/24/solid";
 // storeインポート
 import { useStore } from "../store/store";
 // typeインポート
@@ -13,22 +13,27 @@ import Button from "./Button";
 import Input from "./Input";
 import DeleteListModal from "./DeleteListModal";
 import RenameListModal from "./RenameListModal";
+import DeadlineModal from "./DeadlineModal";
 import { useState } from "react";
-
 
 // TodoItem
 type TodoItemProps = {
     onDelete: (todoItemId: number) => void,
     onUpdateComplete: (todoItemId: number, complete: boolean) => void,
     onRename: (todoItemId: number, newTodoItemText: string) => void,
+    onDeadline: (todoItemId: number, deadline: Date) => void,
     todoItem: TodoItem,
 }
 
 function TodoItemComponent(props: TodoItemProps) {
-    const { onDelete, onUpdateComplete, onRename, todoItem } = props;
+    const { onDelete, onUpdateComplete, onRename, onDeadline, todoItem } = props;
 
+    // todoItemTextの変更
     const [isEditing, setIsEditig] = useState(false);
     const [editedText, setEditedText] = useState(todoItem.text);
+
+    // カレンダーmodaldialogを開く
+    const [deadlineModalOpen, setDeadlineModalOpen] = useState(false);
 
     // // 編集モード
     const handleEditClick = () => {
@@ -70,9 +75,22 @@ function TodoItemComponent(props: TodoItemProps) {
         )}
 
         <Button 
+          icon={<ClockIcon className="h-4 w-4" />}
+          onClick={() => setDeadlineModalOpen(true)}
+          variant="ghost"
+        />
+
+        <Button 
           icon={<MinusSmallIcon className="h-4 w-4" />}
           onClick={() => onDelete(todoItem.id)}
           variant="ghost"
+        />
+
+        {/* ModalOpen */}
+        <DeadlineModal 
+          open={deadlineModalOpen}
+          onClose={() => setDeadlineModalOpen(false)}
+          onSetDeadline={() => onDeadline(todoItem.id, new Date())}
         />
       </div>
     )
@@ -94,6 +112,7 @@ export default function TodoListComponent(props: TodoListProps) {
     const onDeleteTodoItem = useStore((store) => store.deleteTodoItem);
     const onUpdateTodoItemComplete = useStore((store) => store.updateTodoItemComplete);
     const onRenameTodoItem = useStore((store) => store.renameTodoItem);
+    const onDeadlineTodoItem = useStore((store) => store.deadlineTodoItem);
 
     // ModalDialogの状態(表示、非表示)を管理
     const [renameListModalOpen, setRenameListModalOpen] = useState(false);
@@ -136,8 +155,12 @@ export default function TodoListComponent(props: TodoListProps) {
               onRename={(todoItemId: number, newTodoItemText: string) => 
                 onRenameTodoItem(todoList.id, todoItemId, newTodoItemText)
               }
+              onDeadline={(todoItemId: number, deadline: Date) => 
+                onDeadlineTodoItem(todoList.id, todoItemId, deadline)
+              }
               todoItem={todoItem}
             />
+
           ))}
         </div>
         {/* 下段のform */}

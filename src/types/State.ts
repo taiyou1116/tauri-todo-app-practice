@@ -16,6 +16,7 @@ export type State = {
     updateTodoItemComplete: (listId: number, todoId: number, complete: boolean,) => void, //completeを更新
     deleteTodoItem: (listId: number, todoId: number) => void;
     renameTodoItem: (listId: number, todoId: number, todoText: string) => void,
+    deadlineTodoItem: (listId: number, todoId: number, deadline: Date) => void,
     
     theme: Theme, //ホワイト、ブラック
     setTheme: (theme?: Theme) => void; //theme?とすることで、Theme型である場合と、そうでない場合を受け取れる
