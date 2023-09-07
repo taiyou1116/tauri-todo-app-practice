@@ -90,7 +90,7 @@ function TodoItemComponent(props: TodoItemProps) {
         <DeadlineModal 
           open={deadlineModalOpen}
           onClose={() => setDeadlineModalOpen(false)}
-          onSetDeadline={() => onDeadline(todoItem.id, new Date())}
+          onSetDeadline={(deadline) => onDeadline(todoItem.id, deadline)}
         />
       </div>
     )

@@ -1,4 +1,5 @@
 import DateTimePicker from "react-datetime-picker";
+import 'react-datetime-picker/dist/DateTimePicker.css';
 
 type DateTimePickerProps = {
     onChange: (deadline: Date | null) => void,

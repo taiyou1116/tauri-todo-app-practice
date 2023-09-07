@@ -149,7 +149,7 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     deadlineTodoItem: async (listId, todoId, deadline) => {
-        
+        console.log(listId, todoId, deadline);
     },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
