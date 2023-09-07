@@ -13,6 +13,7 @@ export default function Input(props: InputProps) {
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           value={value}
+          autoFocus
         />
     )
 }

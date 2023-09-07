@@ -32,6 +32,7 @@ function TodoItemComponent(props: TodoItemProps) {
 
     // // 編集モード
     const handleEditClick = () => {
+        setEditedText(todoItem.text);
         setIsEditig(true);
     }
 
