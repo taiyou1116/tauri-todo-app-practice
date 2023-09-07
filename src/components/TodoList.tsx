@@ -53,14 +53,14 @@ function TodoItemComponent(props: TodoItemProps) {
         />
 
         {isEditing ? (
-          <form onSubmit={(e) => handleOnEditTodoText(e)}>
-            <div className="grow">
+          <form
+            className="grow" 
+            onSubmit={(e) => handleOnEditTodoText(e)}>
               <Input
                 onChange={(v) => setEditedText(v)}
                 placeholder="new todo text..."
                 value={editedText}
               />
-            </div>
           </form>
         ) : (
           <p className="grow" onClick={() => handleEditClick()}>
