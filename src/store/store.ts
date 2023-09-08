@@ -92,7 +92,7 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     updateTodoItemComplete: async (listId: number, todoId: number, complete: boolean) => {
-        const result: Result<TodoItem, string> = await invoke("update_todo_item_complete", {listId, todoId, complete});
+        const result: Result<TodoItem, string> = await invoke("update_todo_item_complete", {todoId, complete});
         if (typeof result === "string") {
             toast.error(`Something went wrong: ${result}`);
             return;
@@ -101,8 +101,8 @@ export const useStore = create<State>((set, get) => ({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
                     if (todoList.id === listId) {
-                        todoList.todos = todoList.todos.map((TodoItem) => {
-                            return TodoItem.id === todoId ? result : TodoItem;
+                        todoList.todos = todoList.todos.map((todoItem) => {
+                            return todoItem.id === todoId ? result : todoItem;
                         })
                     }
                     return todoList;
@@ -111,7 +111,7 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     deleteTodoItem: async (listId, todoId) => {
-        const result: Result<TodoItem, string> = await invoke("delete_todo_item", {listId, todoId});
+        const result: Result<TodoItem, string> = await invoke("delete_todo_item", {todoId});
         if (typeof result === "string") {
             toast.error(`Something went wrong: ${result}`);
             return;
@@ -130,7 +130,7 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     renameTodoItem: async (listId, todoId, todoText) => {
-        const result: Result<TodoItem, string> = await invoke("rename_todo_item", {listId, todoId, todoText});
+        const result: Result<TodoItem, string> = await invoke("rename_todo_item", {todoId, todoText});
         if (typeof result === "string") {
             toast.error(`Something went wrong: ${result}`);
             return;
@@ -139,8 +139,8 @@ export const useStore = create<State>((set, get) => ({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
                     if (todoList.id === listId) {
-                        todoList.todos = todoList.todos.map((TodoItem) => {
-                            return TodoItem.id === todoId ? result : TodoItem;
+                        todoList.todos = todoList.todos.map((todoItem) => {
+                            return todoItem.id === todoId ? result : todoItem;
                         })
                     }
                     return todoList;
@@ -149,7 +149,23 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     deadlineTodoItem: async (listId, todoId, deadline) => {
-        console.log(listId, todoId, deadline);
+        const result: Result<TodoItem, string> = await invoke("deadline_todo_item", {todoId, deadline});
+        if (typeof result === "string") {
+            toast.error(`Something went wrong: ${result}`);
+            return;
+        }
+        set({
+            todoLists: [
+                ...get().todoLists.map((todoList) => {
+                    if (todoList.id === listId) {
+                        todoList.todos = todoList.todos.map((todoItem) => {
+                            return todoItem.id === todoId ? result : todoItem;
+                        })
+                    }
+                    return todoList;
+                })
+            ]
+        })
     },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",

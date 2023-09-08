@@ -15,9 +15,10 @@ model TodoList {
 }
 
 model TodoItem {
-    id         Int      @id @default(autoincrement())
-    todoList   TodoList @relation(fields: [todoListId], references: [id])
+    id         Int       @id @default(autoincrement())
+    todoList   TodoList  @relation(fields: [todoListId], references: [id])
     todoListId Int
     text       String
-    complete   Boolean  @default(false)
+    complete   Boolean   @default(false)
+    deadline   DateTime?
 }
