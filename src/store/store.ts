@@ -25,6 +25,11 @@ export const useStore = create<State>((set, get) => ({
             toast.error(`Something went wrong: ${result}`);
             return;
         }
+        result.map((list) => {
+            list.todos.map((todo) => {
+                todo.deadline = todo.deadline ? new Date(todo.deadline) : null;
+            })
+        })
         set({ todoLists: result });
     },
     // Listの作成(TodoListを返す)
@@ -67,6 +72,9 @@ export const useStore = create<State>((set, get) => ({
                 // map関数は全ての要素を返す。全ての要素に対して処理を行う。今回はidがあう要素に対して、resultを格納
                 ...get().todoLists.map((todoList) => {
                     if (todoList.id === listId) {
+                        result.todos.map((todo) => {
+                            todo.deadline = todo.deadline ? new Date(todo.deadline) : null; 
+                        })
                         todoList = result;
                     }
                     return todoList;
@@ -97,6 +105,7 @@ export const useStore = create<State>((set, get) => ({
             toast.error(`Something went wrong: ${result}`);
             return;
         }
+        result.deadline = result.deadline ? new Date(result.deadline) : null;
         set({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
@@ -135,6 +144,7 @@ export const useStore = create<State>((set, get) => ({
             toast.error(`Something went wrong: ${result}`);
             return;
         }
+        result.deadline = result.deadline ? new Date(result.deadline) : null;
         set({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
@@ -154,9 +164,8 @@ export const useStore = create<State>((set, get) => ({
             toast.error(`Something went wrong: ${result}`);
             return;
         }
-        if (result.deadline !== null) {
-            const utcDeadline = new Date(result.deadline);
-        }
+        // 日本時間に変更
+        result.deadline = result.deadline ? new Date(result.deadline) : null;
         set({
             todoLists: [
                 ...get().todoLists.map((todoList) => {

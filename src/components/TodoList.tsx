@@ -73,12 +73,21 @@ function TodoItemComponent(props: TodoItemProps) {
             {todoItem.text}
           </p> 
         )}
-
-        <Button 
-          icon={<ClockIcon className="h-4 w-4" />}
-          onClick={() => setDeadlineModalOpen(true)}
-          variant="ghost"
-        />
+        
+        {/* 値が入っていたら */}
+        {todoItem.deadline ? (
+          <p 
+            onClick={() => setDeadlineModalOpen(true)}
+            className="cursor-pointer"
+          >
+            { todoItem.deadline.toLocaleString() }
+          </p>
+        ) : 
+          <Button 
+            icon={<ClockIcon className="h-4 w-4" />}
+            onClick={() => setDeadlineModalOpen(true)}
+            variant="ghost"
+        />}
 
         <Button 
           icon={<MinusSmallIcon className="h-4 w-4" />}
