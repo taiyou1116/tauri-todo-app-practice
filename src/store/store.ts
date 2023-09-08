@@ -154,6 +154,9 @@ export const useStore = create<State>((set, get) => ({
             toast.error(`Something went wrong: ${result}`);
             return;
         }
+        if (result.deadline !== null) {
+            const utcDeadline = new Date(result.deadline);
+        }
         set({
             todoLists: [
                 ...get().todoLists.map((todoList) => {
