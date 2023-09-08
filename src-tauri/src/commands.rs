@@ -199,3 +199,29 @@ pub async fn rename_todo_item(
         }
     }
 }
+
+#[tauri::command]
+pub async fn deadline_todo_item(
+    state: tauri::State<'_, AppState>,
+    todo_id: i32,
+    deadline: Option<
+        ::prisma_client_rust::chrono::DateTime<::prisma_client_rust::chrono::FixedOffset>,
+    >,
+) -> Result<Option<todo_item::Data>, String> {
+    match state
+        .prisma_client
+        .todo_item()
+        .update(
+            todo_item::id::equals(todo_id),
+            vec![todo_item::deadline::set(deadline)],
+        )
+        .exec()
+        .await
+    {
+        Ok(update_todo) => Ok(Some(update_todo)),
+        Err(e) => {
+            println!("Err {:?}", e);
+            Err(e.to_string())
+        }
+    }
+}
