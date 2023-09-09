@@ -9,6 +9,7 @@ import CreateListModal from "./CreateListModal";
 import { useState } from "react";
 
 import { toast } from "react-hot-toast";
+import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
 
 type SliderListItemProps = {
     count: number,
@@ -40,6 +41,24 @@ function SidebarListItem(props: SliderListItemProps) {
 // 通知を表示する関数を定義
 const notify = () => {
   toast.success('これはデスクトップ通知です！');
+  
+  const testNotification = async () => {
+    let permissionGranted = await isPermissionGranted();
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === 'granted';
+    }
+    if (permissionGranted) {
+      try {
+        await sendNotification('Tauri is awesome!');
+        await sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
+        console.log("成功");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  testNotification();
 };
 
 export default function Sidebar() {
