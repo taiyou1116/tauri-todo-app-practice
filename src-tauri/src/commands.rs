@@ -4,7 +4,7 @@ use crate::{
     db::prisma::{todo_item, todo_list},
     state::AppState,
 };
-use prisma_client_rust::chrono::{DateTime, FixedOffset};
+// use prisma_client_rust::chrono::{DateTime, FixedOffset};
 
 // tauri::Stateはアプリ全体の状態管理(データベースやアプリの設定など)
 #[tauri::command(async)]
@@ -201,14 +201,14 @@ pub async fn rename_todo_item(
     }
 }
 
-fn convert_to_japan_time(utc_datetime: DateTime<FixedOffset>) -> DateTime<FixedOffset> {
-    // 日本時間のオフセットを作成（UTC+9時間）
-    let japan_offset = FixedOffset::east(9 * 3600); // 9 hours * 3600 seconds/hour
+// fn convert_to_japan_time(utc_datetime: DateTime<FixedOffset>) -> DateTime<FixedOffset> {
+//     // 日本時間のオフセットを作成（UTC+9時間）
+//     let japan_offset = FixedOffset::east(9 * 3600); // 9 hours * 3600 seconds/hour
 
-    // UTCから日本時間に変換
-    let japan_datetime = utc_datetime.with_timezone(&japan_offset);
-    japan_datetime
-}
+//     // UTCから日本時間に変換
+//     let japan_datetime = utc_datetime.with_timezone(&japan_offset);
+//     japan_datetime
+// }
 
 #[tauri::command]
 pub async fn deadline_todo_item(
@@ -219,18 +219,22 @@ pub async fn deadline_todo_item(
     >,
 ) -> Result<Option<todo_item::Data>, String> {
     if let Some(deadline_datetime) = deadline {
-        let jp_time = convert_to_japan_time(deadline_datetime);
+        // let jp_time = convert_to_japan_time(deadline_datetime);
+        // println!("{}", jp_time);
         match state
             .prisma_client
             .todo_item()
             .update(
                 todo_item::id::equals(todo_id),
-                vec![todo_item::deadline::set(Some(jp_time))], // `jp_time` を`Some`でラップ
+                vec![todo_item::deadline::set(Some(deadline_datetime))], // `jp_time` を`Some`でラップ
             )
             .exec()
             .await
         {
-            Ok(update_todo) => Ok(Some(update_todo)),
+            Ok(update_todo) => {
+                println!("{:?}", update_todo);
+                Ok(Some(update_todo))
+            }
             Err(e) => {
                 println!("Err {:?}", e);
                 Err(e.to_string())

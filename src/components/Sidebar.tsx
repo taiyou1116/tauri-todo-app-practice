@@ -8,6 +8,8 @@ import Button from "./Button";
 import CreateListModal from "./CreateListModal";
 import { useState } from "react";
 
+import { toast } from "react-hot-toast";
+
 type SliderListItemProps = {
     count: number,
     onClick: () => void,
@@ -34,6 +36,11 @@ function SidebarListItem(props: SliderListItemProps) {
       </div>
     )
 }
+
+// 通知を表示する関数を定義
+const notify = () => {
+  toast.success('これはデスクトップ通知です！');
+};
 
 export default function Sidebar() {
     const todoLists = useStore((state) => state.todoLists);
@@ -89,6 +96,7 @@ export default function Sidebar() {
             />
           )}
         </div>
+        <button onClick={() => notify()}>通知を表示</button>
       </div>
     )
 }

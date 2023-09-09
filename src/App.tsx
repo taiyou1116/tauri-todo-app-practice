@@ -41,8 +41,9 @@ export default function App() {
             <p className="font-midium text-lg">Select a list</p>
           </div>
         )}
+        {/* どのように通知を出すか */}
         <Toaster 
-          position="bottom-center"
+          position="top-right"
           toastOptions={{
             className:'bg-gray-50 dark:bg-slate-600 dark:text-white rounded-md shadow-md'
           }}
