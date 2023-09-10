@@ -17,8 +17,8 @@ tauri = { version = "1.4", features = [ "notification-all", "shell-open"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1", features = ["full"] }
-prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9" }
-prisma-client-rust-cli = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.9" }
+prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.4.0" }
+prisma_cli = { path = "../../prisma_cli" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
