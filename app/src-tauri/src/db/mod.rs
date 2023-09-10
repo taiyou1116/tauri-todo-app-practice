@@ -4,7 +4,6 @@ pub(crate) mod prisma;
 use crate::BUNDLE_IDENTIFIER;
 
 use self::prisma::PrismaClient;
-use prisma_client_rust::raw;
 
 const DB_FILE_NAME: &str = "database.db";
 static SQL_MIGRATION_STATEMENTS: &str = include_str!("migration.sql");
@@ -34,8 +33,7 @@ pub async fn init_db(prisma_client: &PrismaClient) {
 
         if trimmed_statement.len() > 0 {
             prisma_client
-                ._execute_raw(raw!(trimmed_statement))
-                .exec()
+                ._execute_raw(trimmed_statement)
                 .await
                 .expect("Error executing migration SQL");
         }

@@ -38,7 +38,7 @@ pub async fn create_todo_list(
     match state
         .prisma_client
         .todo_list()
-        .create(name, vec![])
+        .create(todo_list::name::set(name), vec![])
         .with(todo_list::todos::fetch(vec![]))
         .exec()
         .await
@@ -61,7 +61,8 @@ pub async fn delete_todo_list(
         .prisma_client
         .todo_item()
         // 複数削除する場合はdelete_manyを使う(特定できないときは、WhereParamが返り値)
-        .delete_many(vec![todo_item::todo_list_id::equals(list_id)])
+        .find_many(vec![todo_item::todo_list_id::equals(list_id)])
+        .delete()
         .exec()
         .await
     {
@@ -69,7 +70,8 @@ pub async fn delete_todo_list(
             match state
                 .prisma_client
                 .todo_list()
-                .delete(todo_list::id::equals(list_id))
+                .find_unique(todo_list::id::equals(list_id))
+                .delete()
                 .exec()
                 .await
             {
@@ -96,15 +98,13 @@ pub async fn rename_todo_list(
     match state
         .prisma_client
         .todo_list()
-        .update(
-            todo_list::id::equals(list_id),
-            vec![todo_list::name::set(new_name)],
-        )
+        .find_unique(todo_list::id::equals(list_id))
+        .update(vec![todo_list::name::set(new_name)])
         .with(todo_list::todos::fetch(vec![]))
         .exec()
         .await
     {
-        Ok(updated_list) => Ok(Some(updated_list)),
+        Ok(updated_list) => Ok(updated_list),
         Err(e) => {
             println!("Error: {:?}", e);
             Err(e.to_string())
@@ -121,7 +121,11 @@ pub async fn create_todo_item(
     match state
         .prisma_client
         .todo_item()
-        .create(todo_list::id::equals(list_id), todo_text, vec![])
+        .create(
+            todo_item::todo_list::link(todo_list::id::equals(list_id)),
+            todo_item::text::set(todo_text),
+            vec![],
+        )
         .exec()
         .await
     {
@@ -142,14 +146,12 @@ pub async fn update_todo_item_complete(
     match state
         .prisma_client
         .todo_item()
-        .update(
-            todo_item::id::equals(todo_id),
-            vec![todo_item::complete::set(complete)],
-        )
+        .find_unique(todo_item::id::equals(todo_id))
+        .update(vec![todo_item::complete::set(complete)])
         .exec()
         .await
     {
-        Ok(updated_todo_item) => Ok(Some(updated_todo_item)),
+        Ok(updated_todo_item) => Ok(updated_todo_item),
         Err(e) => {
             println!("Err{:?}", e);
             Err(e.to_string())
@@ -165,11 +167,12 @@ pub async fn delete_todo_item(
     match state
         .prisma_client
         .todo_item()
-        .delete(todo_item::id::equals(todo_id))
+        .find_unique(todo_item::id::equals(todo_id))
+        .delete()
         .exec()
         .await
     {
-        Ok(delete_todo) => Ok(Some(delete_todo)),
+        Ok(delete_todo) => Ok(delete_todo),
         Err(e) => {
             println!("Err: {:?}", e);
             Err(e.to_string())
@@ -186,14 +189,12 @@ pub async fn rename_todo_item(
     match state
         .prisma_client
         .todo_item()
-        .update(
-            todo_item::id::equals(todo_id),
-            vec![todo_item::text::set(todo_text)],
-        )
+        .find_unique(todo_item::id::equals(todo_id))
+        .update(vec![todo_item::text::set(todo_text)])
         .exec()
         .await
     {
-        Ok(update_todo) => Ok(Some(update_todo)),
+        Ok(update_todo) => Ok(update_todo),
         Err(e) => {
             println!("Err: {:?}", e);
             Err(e.to_string())
@@ -201,31 +202,18 @@ pub async fn rename_todo_item(
     }
 }
 
-// fn convert_to_japan_time(utc_datetime: DateTime<FixedOffset>) -> DateTime<FixedOffset> {
-//     // 日本時間のオフセットを作成（UTC+9時間）
-//     let japan_offset = FixedOffset::east(9 * 3600); // 9 hours * 3600 seconds/hour
-
-//     // UTCから日本時間に変換
-//     let japan_datetime = utc_datetime.with_timezone(&japan_offset);
-//     japan_datetime
-// }
-
 #[tauri::command]
 pub async fn deadline_todo_item(
     state: tauri::State<'_, AppState>,
     todo_id: i32,
-    deadline: Option<
-        prisma_client_rust::chrono::DateTime<::prisma_client_rust::chrono::FixedOffset>,
-    >,
+    deadline: Option<prisma_client_rust::chrono::DateTime<::prisma_client_rust::chrono::Utc>>,
 ) -> Result<Option<todo_item::Data>, String> {
     if let Some(deadline_datetime) = deadline {
-        // let jp_time = convert_to_japan_time(deadline_datetime);
-        // println!("{}", jp_time);
         match state
             .prisma_client
             .todo_item()
+            .find_unique(todo_item::id::equals(todo_id))
             .update(
-                todo_item::id::equals(todo_id),
                 vec![todo_item::deadline::set(Some(deadline_datetime))], // `jp_time` を`Some`でラップ
             )
             .exec()
@@ -233,7 +221,7 @@ pub async fn deadline_todo_item(
         {
             Ok(update_todo) => {
                 println!("{:?}", update_todo);
-                Ok(Some(update_todo))
+                Ok(update_todo)
             }
             Err(e) => {
                 println!("Err {:?}", e);
