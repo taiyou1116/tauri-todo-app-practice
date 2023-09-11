@@ -62,12 +62,13 @@ const notify = () => {
 };
 
 export default function Sidebar() {
-    const todoLists = useStore((state) => state.todoLists);
-    const selectedTodoList = useStore((state) => state.selectedTodoList);
-    const onCreateTodoList = useStore((state) => state.createTodoList);
-    const onSelectTodoList = useStore((state) => state.selectTodoList);
-    const theme = useStore((state) => state.theme);
-    const setTheme = useStore((state) => state.setTheme);
+    const todoLists = useStore((store) => store.todoLists);
+    const selectedTodoList = useStore((store) => store.selectedTodoList);
+    const onCreateTodoList = useStore((store) => store.createTodoList);
+    const onSelectTodoList = useStore((store) => store.selectTodoList);
+    const onGetTodoItemsDeadline = useStore((store) => store.getTodoItemDeadline);
+    const theme = useStore((store) => store.theme);
+    const setTheme = useStore((store) => store.setTheme);
 
     const [createListModalOpen, setCreateListModalOpen] = useState(false);
 
@@ -115,7 +116,7 @@ export default function Sidebar() {
             />
           )}
         </div>
-        <button onClick={() => notify()}>通知を表示</button>
+        <button onClick={() => onGetTodoItemsDeadline()}>通知を表示</button>
       </div>
     )
 }

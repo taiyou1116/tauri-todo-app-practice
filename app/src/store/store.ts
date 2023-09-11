@@ -179,6 +179,19 @@ export const useStore = create<State>((set, get) => ({
             ]
         })
     },
+    getTodoItemDeadline: async () => {
+        const result: Result<TodoItem[], string> = await invoke("get_todo_items_deadline");
+        if (typeof result === 'string') {
+            toast.error(`Something went wrong: ${result}`);
+            return;
+        }
+        result.map((todo) => {
+            if (todo.deadline === null) return;
+            const deadline = new Date(todo.deadline);
+
+            console.log(deadline);
+        })
+    },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
     setTheme: (theme?: Theme) => {

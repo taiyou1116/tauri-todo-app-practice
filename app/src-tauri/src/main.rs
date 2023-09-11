@@ -33,6 +33,7 @@ async fn main() {
             commands::delete_todo_item,
             commands::rename_todo_item,
             commands::deadline_todo_item,
+            commands::get_todo_items_deadline,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

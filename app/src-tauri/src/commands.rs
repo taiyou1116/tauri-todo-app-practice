@@ -1,10 +1,13 @@
 use std::vec;
 
 use crate::{
-    db::prisma::{todo_item, todo_list},
+    db::prisma::{
+        todo_item,
+        todo_list::{self},
+    },
     state::AppState,
 };
-// use prisma_client_rust::chrono::{DateTime, FixedOffset};
+use prisma_client_rust::operator::not;
 
 // tauri::Stateはアプリ全体の状態管理(データベースやアプリの設定など)
 #[tauri::command(async)]
@@ -232,5 +235,25 @@ pub async fn deadline_todo_item(
         // `deadline` が `None` の場合、特別な処理を行うかエラーメッセージを返すなどの対応を行います。
         // ここではエラーメッセージを返す例を示しています。
         Err("Deadline not provided.".to_string())
+    }
+}
+
+// dbからdatetimeを受け取る
+#[tauri::command]
+pub async fn get_todo_items_deadline(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<todo_item::Data>, String> {
+    match state
+        .prisma_client
+        .todo_item()
+        .find_many(vec![not(vec![todo_item::deadline::equals(None)])])
+        .exec()
+        .await
+    {
+        Ok(todo_items_deadline) => Ok(todo_items_deadline),
+        Err(e) => {
+            println!("{}", e);
+            Err(e.to_string())
+        }
     }
 }
