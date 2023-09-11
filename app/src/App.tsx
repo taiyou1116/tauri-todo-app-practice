@@ -11,14 +11,15 @@ export default function App() {
     const todoLists = useStore((state) => state.todoLists);
     const selectedTodoList = useStore((state) => state.selectedTodoList);
     const selectTodoList = useStore((state) => state.selectTodoList);
+    const onGetTodoItemsDeadline = useStore((store) => store.getTodoItemDeadline);
     const setTheme = useStore((state) => state.setTheme);
 
     useEffect(() => {
         getTodoLists();
+        onGetTodoItemsDeadline();
         setTheme();
     }, [])
 
-    // ?
     useEffect(() => {
         // selectされているListが存在するならば
         if (selectedTodoList) {

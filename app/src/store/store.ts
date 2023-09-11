@@ -8,6 +8,7 @@ import { Theme } from "../types/Theme";
 import { TodoItem } from "../types/TodoItem";
 import { TodoList } from "../types/TodoList";
 import { Result } from "../types/Result";
+import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
 
 // 状態を管理するためのカスタムフック(setで状態を更新)
 // ジェネリクスでStateタイプを宣言して、Stateプロパティのみをフックとして登録
@@ -180,13 +181,25 @@ export const useStore = create<State>((set, get) => ({
         })
     },
     // useEffectで最初と、期限が設定されたとき
-    getTodoItemDeadline: async (): Promise<Result<TodoItem[], string>> => {
+    getTodoItemDeadline: async () => {
         const result: Result<TodoItem[], string> = await invoke("get_todo_items_deadline");
         if (typeof result === 'string') {
             toast.error(`Something went wrong: ${result}`);
             return Promise.reject(result);
         }
-        return Promise.resolve(result)
+        const items: TodoItem[] = result; // Resultからデータを取り出す    
+        const localTime = new Date();
+        for (const item of items) {
+            if (item.deadline === null) continue;
+            const dbLocalDeadlineTime = new Date(item.deadline);
+            // 期限が未来にある場合
+            if (dbLocalDeadlineTime > localTime) {
+                const untilDeadline = dbLocalDeadlineTime.getTime() - localTime.getTime();
+                setTimeout(() => {
+                    notify();
+                }, untilDeadline);
+            }
+        }
     },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
@@ -200,3 +213,27 @@ export const useStore = create<State>((set, get) => ({
         set({ theme });
     }
 }));
+
+
+// 通知
+const notify = () => {
+    console.log("時間です");
+    
+    const testNotification = async () => {
+      let permissionGranted = await isPermissionGranted();
+      if (!permissionGranted) {
+        const permission = await requestPermission();
+        permissionGranted = permission === 'granted';
+      }
+      if (permissionGranted) {
+        try {
+          await sendNotification('Tauri is awesome!');
+          await sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
+          console.log("成功");
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    testNotification();
+  };
