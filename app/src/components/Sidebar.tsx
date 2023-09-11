@@ -10,6 +10,8 @@ import { useState } from "react";
 
 import { toast } from "react-hot-toast";
 import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/api/notification";
+import { TodoItem } from "../types/TodoItem";
+import { Result } from "../types/Result";
 
 type SliderListItemProps = {
     count: number,
@@ -18,7 +20,7 @@ type SliderListItemProps = {
     selected: boolean,
 }
 
-// 一つのスライドアイテム
+// 一つのサイドアイテム
 function SidebarListItem(props: SliderListItemProps) {
     const { count, onClick, name, selected } = props;
 
@@ -40,7 +42,7 @@ function SidebarListItem(props: SliderListItemProps) {
 
 // 通知を表示する関数を定義
 const notify = () => {
-  toast.success('これはデスクトップ通知です！');
+  console.log("時間です");
   
   const testNotification = async () => {
     let permissionGranted = await isPermissionGranted();
@@ -59,6 +61,29 @@ const notify = () => {
     }
   }
   testNotification();
+};
+
+// ここに時間の比較をして、通知を設定する関数を作る(引数にonGetTodoItemsDeadlineを受け取る)
+const setDeadline = async (itemsPromise: Promise<Result<TodoItem[], string>>) => {
+    const itemsResult: Result<TodoItem[], string> = await itemsPromise;
+    if (typeof itemsResult === 'string') {
+        console.error(`Error: ${itemsResult}`);
+        return;
+    }
+
+    const items: TodoItem[] = itemsResult; // Resultからデータを取り出す    
+    const localTime = new Date();
+    for (const item of items) {
+        if (item.deadline === null) continue;
+        const dbLocalDeadlineTime = new Date(item.deadline);
+        // 期限が未来にある場合
+        if (dbLocalDeadlineTime > localTime) {
+            const untilDeadline = dbLocalDeadlineTime.getTime() - localTime.getTime();
+            setTimeout(() => {
+                notify();
+            }, untilDeadline);
+        }
+    }
 };
 
 export default function Sidebar() {
@@ -116,7 +141,6 @@ export default function Sidebar() {
             />
           )}
         </div>
-        <button onClick={() => onGetTodoItemsDeadline()}>通知を表示</button>
       </div>
     )
 }

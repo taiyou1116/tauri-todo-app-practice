@@ -179,18 +179,14 @@ export const useStore = create<State>((set, get) => ({
             ]
         })
     },
-    getTodoItemDeadline: async () => {
+    // useEffectで最初と、期限が設定されたとき
+    getTodoItemDeadline: async (): Promise<Result<TodoItem[], string>> => {
         const result: Result<TodoItem[], string> = await invoke("get_todo_items_deadline");
         if (typeof result === 'string') {
             toast.error(`Something went wrong: ${result}`);
-            return;
+            return Promise.reject(result);
         }
-        result.map((todo) => {
-            if (todo.deadline === null) return;
-            const deadline = new Date(todo.deadline);
-
-            console.log(deadline);
-        })
+        return Promise.resolve(result)
     },
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",

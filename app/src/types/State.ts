@@ -1,5 +1,7 @@
 import { Theme } from "@tauri-apps/api/window";
 import { TodoList } from "./TodoList";
+import { Result } from "./Result";
+import { TodoItem } from "./TodoItem";
 
 // 状態を管理...Stateはオブジェクト型の型エイリアス(型エイリアスは色々な型、関数を分かりやすく命名できる)
 export type State = {
@@ -17,7 +19,7 @@ export type State = {
     deleteTodoItem: (listId: number, todoId: number) => void;
     renameTodoItem: (listId: number, todoId: number, todoText: string) => void,
     deadlineTodoItem: (listId: number, todoId: number, deadline: Date) => void,
-    getTodoItemDeadline: () => void,
+    getTodoItemDeadline: () => Promise<Result<TodoItem[], string>>,
     
     theme: Theme, //ホワイト、ブラック
     setTheme: (theme?: Theme) => void; //theme?とすることで、Theme型である場合と、そうでない場合を受け取れる
