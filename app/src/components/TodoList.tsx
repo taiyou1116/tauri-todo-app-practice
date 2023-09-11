@@ -122,6 +122,7 @@ export default function TodoListComponent(props: TodoListProps) {
     const onUpdateTodoItemComplete = useStore((store) => store.updateTodoItemComplete);
     const onRenameTodoItem = useStore((store) => store.renameTodoItem);
     const onDeadlineTodoItem = useStore((store) => store.deadlineTodoItem);
+    const onGetTodoItemDeadline = useStore((store) => store.getTodoItemDeadline);
 
     // ModalDialogの状態(表示、非表示)を管理
     const [renameListModalOpen, setRenameListModalOpen] = useState(false);
@@ -134,6 +135,16 @@ export default function TodoListComponent(props: TodoListProps) {
           onCreateTodoItem(todoList.id, newTodoItemText);
           setNewTodoItemText('');
         }
+    }
+
+    async function handleDeadlineTodoItemAndFetchDeadlines(listId: number, todoId: number, deadline: Date) {
+      try {
+          await onDeadlineTodoItem(listId, todoId, deadline);
+          // deadlineTodoItemの処理が完了した後にgetTodoItemDeadlineを実行
+          await onGetTodoItemDeadline();
+      } catch (error) {
+          console.error(`An error occurred: ${error}`);
+      }
     }
 
     return (
@@ -165,7 +176,7 @@ export default function TodoListComponent(props: TodoListProps) {
                 onRenameTodoItem(todoList.id, todoItemId, newTodoItemText)
               }
               onDeadline={(todoItemId: number, deadline: Date) => 
-                onDeadlineTodoItem(todoList.id, todoItemId, deadline)
+                handleDeadlineTodoItemAndFetchDeadlines(todoList.id, todoItemId, deadline)
               }
               todoItem={todoItem}
             />

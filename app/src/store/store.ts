@@ -180,7 +180,8 @@ export const useStore = create<State>((set, get) => ({
             ]
         })
     },
-    // useEffectで最初と、期限が設定されたとき
+    itemDeadlines: [],
+    // アプリ開始時、todoの更新時
     getTodoItemDeadline: async () => {
         const result: Result<TodoItem[], string> = await invoke("get_todo_items_deadline");
         if (typeof result === 'string') {
@@ -195,12 +196,16 @@ export const useStore = create<State>((set, get) => ({
             // 期限が未来にある場合
             if (dbLocalDeadlineTime > localTime) {
                 const untilDeadline = dbLocalDeadlineTime.getTime() - localTime.getTime();
-                setTimeout(() => {
+                const timerId = setTimeout(() => {
                     notify();
+                    set((state) => ({ itemDeadlines: state.itemDeadlines.filter((id) => id !== timerId) }))
                 }, untilDeadline);
+                set((state) => ({ itemDeadlines: [...state.itemDeadlines, timerId] }))
+                console.log(item);
             }
         }
     },
+    
     // ローカルストレージのthemeによってダークモードかどうか判断している
     theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
     setTheme: (theme?: Theme) => {
@@ -213,7 +218,6 @@ export const useStore = create<State>((set, get) => ({
         set({ theme });
     }
 }));
-
 
 // 通知
 const notify = () => {
