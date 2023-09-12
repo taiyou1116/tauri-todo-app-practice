@@ -197,11 +197,10 @@ export const useStore = create<State>((set, get) => ({
             if (dbLocalDeadlineTime > localTime) {
                 const untilDeadline = dbLocalDeadlineTime.getTime() - localTime.getTime();
                 const timerId = setTimeout(() => {
-                    notify();
+                    sendNotificationToDesktop(item.text);
                     set((state) => ({ itemDeadlines: state.itemDeadlines.filter((id) => id !== timerId) }))
                 }, untilDeadline);
                 set((state) => ({ itemDeadlines: [...state.itemDeadlines, timerId] }))
-                console.log(item);
             }
         }
     },
@@ -220,24 +219,17 @@ export const useStore = create<State>((set, get) => ({
 }));
 
 // 通知
-const notify = () => {
-    console.log("時間です");
-    
-    const testNotification = async () => {
-      let permissionGranted = await isPermissionGranted();
-      if (!permissionGranted) {
+const sendNotificationToDesktop = async (todoText: string) => {
+    let permissionGranted = await isPermissionGranted();
+    if (!permissionGranted) {
         const permission = await requestPermission();
         permissionGranted = permission === 'granted';
-      }
-      if (permissionGranted) {
-        try {
-          await sendNotification('Tauri is awesome!');
-          await sendNotification({ title: 'TAURI', body: 'Tauri is awesome!' });
-          console.log("成功");
-        } catch (error) {
-          console.log(error);
-        }
-      }
     }
-    testNotification();
-  };
+    if (permissionGranted) {
+        try {
+            await sendNotification({ title: 'Your todo is now due', body: todoText });
+        } catch (error) {
+            toast.error(`Something went wrong: ${error}`);
+        }
+    } 
+}
