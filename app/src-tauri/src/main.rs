@@ -9,6 +9,7 @@ use menu::get_menu;
 mod state;
 use state::AppState;
 mod commands;
+use tauri::Manager;
 
 const BUNDLE_IDENTIFIER: &str = "com.taiyou.tauri-todo-app";
 
@@ -35,8 +36,31 @@ async fn main() {
             commands::deadline_todo_item,
             commands::get_todo_items_deadline,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                #[allow(unused_unsafe)]
+                #[cfg(not(target_os = "macos"))]
+                {
+                    event.window().hide().unwrap();
+                }
+
+                #[allow(unused_unsafe)]
+                #[cfg(target_os = "macos")]
+                unsafe {
+                    tauri::AppHandle::hide(&event.window().app_handle()).unwrap();
+                }
+                api.prevent_close();
+            }
+            _ => {}
+        })
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app_handle, event| match event {
+            tauri::RunEvent::ExitRequested { api, .. } => {
+                api.prevent_exit();
+            }
+            _ => {}
+        });
 }
 
 fn init_data_dir() {
