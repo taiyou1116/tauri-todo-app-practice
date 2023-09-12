@@ -13,7 +13,6 @@ import DeleteListModal from "./DeleteListModal";
 import RenameListModal from "./RenameListModal";
 import { useState } from "react";
 
-// TodoList
 type TodoListProps = {
     todoList: TodoList,
 }
@@ -21,8 +20,7 @@ type TodoListProps = {
 export default function TodoListComponent(props: TodoListProps) {
     const { todoList } = props;
 
-    // Listで操作できること
-    // onRenameTodoListにカスタムフックとして登録したrenameTodoListを格納
+    // カスタムフック
     const onRenameTodoList = useStore((store) => store.renameTodoList);
     const onDeleteTodoList = useStore((store) => store.deleteTodoList);
     const onCreateTodoItem = useStore((store) => store.createTodoItem);
@@ -47,13 +45,13 @@ export default function TodoListComponent(props: TodoListProps) {
 
     async function handleDeleteTodoItem(todoItemId: number) {
         try {
-          await onDeleteTodoItem(todoList.id, todoItemId);
-          // deadlineTodoItemの処理が完了した後にgetTodoItemDeadlineを実行
-          await onGetTodoItemDeadline();
-      } catch (error) {
-          console.error(`An error occurred: ${error}`);
-      }
-  }
+            await onDeleteTodoItem(todoList.id, todoItemId);
+            // deadlineTodoItemの処理が完了した後にgetTodoItemDeadlineを実行
+            await onGetTodoItemDeadline();
+        } catch (error) {
+            console.error(`An error occurred: ${error}`);
+        }
+    }
 
     async function handleDeleteTodoList() {
         try {
@@ -95,6 +93,7 @@ export default function TodoListComponent(props: TodoListProps) {
           {/* .map(() => {})...値を返さない  .map(() => ())...値を返す */}
           {todoList.todos.map((todoItem) => (
             <TodoItemComponent
+              key={todoItem.id}
               onDelete={(todoItemId: number) => 
                 handleDeleteTodoItem(todoItemId)
               }

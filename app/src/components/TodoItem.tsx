@@ -22,10 +22,9 @@ export default function TodoItemComponent(props: TodoItemProps) {
     const [isEditing, setIsEditig] = useState(false);
     const [editedText, setEditedText] = useState(todoItem.text);
 
-    // カレンダーmodaldialogを開く
+    // Modalの状態管理
     const [deadlineModalOpen, setDeadlineModalOpen] = useState(false);
 
-    // // 編集モード
     const handleEditClick = () => {
         setEditedText(todoItem.text);
         setIsEditig(true);
