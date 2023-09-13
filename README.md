@@ -11,9 +11,10 @@ ToDo Desktop App is a simple task management application. This app allows you to
 
 ## Screenshots
 
-- Choose dates and times with a calendar
+- **Choose dates and times with a calendar**
   <img src="./screenshot/calendar.png" width="300px">
-- Receive notifications in the background
+
+- **Receive notifications in the background**
   <img src="./screenshot/app_icon.png" width="300px">
 
 ## Download
