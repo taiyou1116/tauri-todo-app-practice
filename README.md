@@ -1,13 +1,33 @@
-**Basic functions:**
+# ToDo Desktop App
 
-- add todo list
-- add todos
-- check if completed
-- todo deadline
+ToDo Desktop App is a simple task management application. This app allows you to create ToDo lists, add ToDo items, set deadlines for them, and receive desktop notifications when deadlines are reached.
 
-**Features planned to be added:**
+## Key Features
 
-- Send a notification to your desktop when the deadline approaches
+- Create ToDo lists
+- Create ToDo items
+- Set deadlines for ToDo items
+- Receive desktop notifications when deadlines are reached
 
-**demo(mac only)**
-[download .dmg file](https://github.com/taiyou1116/tauri-todo-app-practice/releases/tag/v0.0.1)
+## Screenshots
+
+![Choose dates and times with a calendar](./screenshot/calendar.png)
+![Receive notifications in the background](./screenshot/app_icon.png)
+
+## Download
+
+You can download this application from the following link:
+
+- [Download for macOS (DMG)](https://github.com/taiyou1116/tauri-todo-app-practice/releases/tag/v1.0.0)
+
+## Installation
+
+Once you've downloaded the application, follow these steps to install it:
+
+1. Double-click the downloaded DMG file to mount it.
+2. Inside the mounted disk image, drag and drop the application into the "Applications" folder.
+3. Once the application is copied to the "Applications" folder, you can launch it from Finder.
+
+## Usage
+
+When you launch the application, you can create ToDo lists, add ToDo items, and set deadlines. Desktop notifications will be displayed when deadlines are reached.
