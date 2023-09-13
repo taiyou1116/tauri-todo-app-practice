@@ -26,8 +26,15 @@ export default function DeadlineModal(props: DeadlineModalProps) {
         onClose();
     }
 
+    function isDeadlineInPast(date: Date | null): boolean {
+      if (date === null) return false;
+
+      const now = new Date();
+      return date < now;
+    }
+
   return (
-    <Modal 
+    <Modal
       onClose={() => handleClose()}
       open={open}
       title="Set todo deadline"
@@ -39,7 +46,13 @@ export default function DeadlineModal(props: DeadlineModalProps) {
         />
         <div className="flex flex-row justify-center gap-2">
           <Button expand onClick={() => handleClose()} text="Cancel"/>
-          <Button expand text="Create" type="submit" variant="primary"/>
+          {isDeadlineInPast(deadline) ? (
+            <span className="border flex focus:outline-none font-medium justify-center px-3 py-1 rounded-md shadow-sm text-red-500">
+              You can't set that time
+            </span>
+          ) : (
+            <Button expand text="Set" type="submit" variant="primary"/>
+          )}
         </div>
       </form>
     </Modal>

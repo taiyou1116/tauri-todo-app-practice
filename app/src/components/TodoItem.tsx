@@ -1,4 +1,4 @@
-import { CheckIcon, ClockIcon, MinusSmallIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, ClockIcon, MinusSmallIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 
 import { TodoItem } from "../types/TodoItem";
@@ -67,8 +67,9 @@ export default function TodoItemComponent(props: TodoItemProps) {
         {todoItem.deadline ? (
           <p 
             onClick={() => setDeadlineModalOpen(true)}
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center"
           >
+            { todoItem.deadline.getTime() < Date.now() ? <ExclamationTriangleIcon className="h-4 w-4" /> : "" }
             { todoItem.deadline.toLocaleString() }
           </p>
         ) : 
